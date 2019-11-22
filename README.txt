@@ -9,7 +9,7 @@ seguintes valores:
   lmnop   | q1w23er45t
 
 O servidor dá segfault no caso de se tentar obter uma chave que não exista
-teste
+
 Phase2 Network.
 1. Implement coding/decoding. // protoc --c_out=. sdmessage.proto // Gera ficheiros .c e copiar .h para include
 
