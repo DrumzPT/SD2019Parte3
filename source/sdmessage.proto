@@ -4,15 +4,17 @@ message message_t
         enum Opcode {
                 OP_BAD       = 0;
                 OP_SIZE      = 10;
-		            OP_SIZE_R    = 11;
+		        OP_SIZE_R    = 11;
                 OP_DEL       = 20;
-		            OP_DEL_R     = 21;
+		        OP_DEL_R     = 21;
                 OP_GET       = 30;
-		            OP_GET_R     = 31;
+		        OP_GET_R     = 31;
                 OP_PUT       = 40;
-		            OP_PUT_R     = 41;
+		        OP_PUT_R     = 41;
                 OP_GETKEYS   = 50;
-		            OP_GETKEYS_R = 51;
+		        OP_GETKEYS_R = 51;
+				OP_VERIFY	 = 60;
+		        OP_VERIFY_R  = 61;
                 OP_ERROR     = 99;
         }
         Opcode opcode = 1;

@@ -107,6 +107,11 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
 		break;
+	case OP_VERIFY:
+		msgToSend.opcode = MESSAGE_T__OPCODE__OP_VERIFY;
+		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_RESULT;
+		msgToSend.opcode = msg->request_id;
+		break;
 	default:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_ERROR;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;

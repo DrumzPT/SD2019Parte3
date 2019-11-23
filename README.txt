@@ -67,3 +67,5 @@ Adaptar o servidor para processar pedidos de escrita assincronamente e responder
 	Alterar invoke() do table_skel.c para responder com id do pedido last_assigned (para o cliente poder usar no verify()).
 Implement verify() (Server)
 Implement rtable_verify() (Client)
+
+verify feito até ao network send receive -> adaptacao do send

@@ -8,6 +8,7 @@
 #define OP_GET 30
 #define OP_PUT 40
 #define OP_GETKEYS 50
+#define OP_VERIFY 60
 #define OP_ERROR 99
 
 #define CT_KEY 10
@@ -17,7 +18,7 @@
 #define CT_RESULT 50
 #define CT_NONE 60
 
-struct message_t
+	struct message_t
 {
 	short opcode; /* código da operação na mensagem */
 	short c_type; /* tipo do conteúdo da mensagem */

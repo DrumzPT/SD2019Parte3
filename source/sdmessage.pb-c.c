@@ -52,7 +52,7 @@ void   message_t__free_unpacked
   assert(message->base.descriptor == &message_t__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue message_t__opcode__enum_values_by_number[12] =
+static const ProtobufCEnumValue message_t__opcode__enum_values_by_number[14] =
 {
   { "OP_BAD", "MESSAGE_T__OPCODE__OP_BAD", 0 },
   { "OP_SIZE", "MESSAGE_T__OPCODE__OP_SIZE", 10 },
@@ -65,17 +65,19 @@ static const ProtobufCEnumValue message_t__opcode__enum_values_by_number[12] =
   { "OP_PUT_R", "MESSAGE_T__OPCODE__OP_PUT_R", 41 },
   { "OP_GETKEYS", "MESSAGE_T__OPCODE__OP_GETKEYS", 50 },
   { "OP_GETKEYS_R", "MESSAGE_T__OPCODE__OP_GETKEYS_R", 51 },
+  { "OP_VERIFY", "MESSAGE_T__OPCODE__OP_VERIFY", 60 },
+  { "OP_VERIFY_R", "MESSAGE_T__OPCODE__OP_VERIFY_R", 61 },
   { "OP_ERROR", "MESSAGE_T__OPCODE__OP_ERROR", 99 },
 };
 static const ProtobufCIntRange message_t__opcode__value_ranges[] = {
-{0, 0},{10, 1},{20, 3},{30, 5},{40, 7},{50, 9},{99, 11},{0, 12}
+{0, 0},{10, 1},{20, 3},{30, 5},{40, 7},{50, 9},{60, 11},{99, 13},{0, 14}
 };
-static const ProtobufCEnumValueIndex message_t__opcode__enum_values_by_name[12] =
+static const ProtobufCEnumValueIndex message_t__opcode__enum_values_by_name[14] =
 {
   { "OP_BAD", 0 },
   { "OP_DEL", 3 },
   { "OP_DEL_R", 4 },
-  { "OP_ERROR", 11 },
+  { "OP_ERROR", 13 },
   { "OP_GET", 5 },
   { "OP_GETKEYS", 9 },
   { "OP_GETKEYS_R", 10 },
@@ -84,6 +86,8 @@ static const ProtobufCEnumValueIndex message_t__opcode__enum_values_by_name[12] 
   { "OP_PUT_R", 8 },
   { "OP_SIZE", 1 },
   { "OP_SIZE_R", 2 },
+  { "OP_VERIFY", 11 },
+  { "OP_VERIFY_R", 12 },
 };
 const ProtobufCEnumDescriptor message_t__opcode__descriptor =
 {
@@ -92,11 +96,11 @@ const ProtobufCEnumDescriptor message_t__opcode__descriptor =
   "Opcode",
   "MessageT__Opcode",
   "",
-  12,
+  14,
   message_t__opcode__enum_values_by_number,
-  12,
+  14,
   message_t__opcode__enum_values_by_name,
-  7,
+  8,
   message_t__opcode__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };

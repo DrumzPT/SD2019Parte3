@@ -266,10 +266,29 @@ char **rtable_get_keys(struct rtable_t *rtable)
 }
 
 /* Verifica se a operação identificada por op_n foi executada.
+*	0 False, 1 True;
 */
 int rtable_verify(struct rtable_t *rtable, int op_n)
 {
-	//TODO
+	printf("OP nr: %d \n ", op_n);
+	if (rtable == NULL)
+		return -1;
+	struct message_t *message = (struct message_t *)malloc(sizeof(struct message_t));
+	if (message == NULL)
+	{
+		printf("Erro ao gerar message_t\n");
+		return -1;
+	}
+	message->opcode = OP_VERIFY;
+	message->c_type = CT_RESULT;
+	message->request_id = op_n;
+	struct message_t *message_returned;
+	if ((message_returned = network_send_receive(rtable, message)) == NULL)
+	{
+		free(message);
+		return -1;
+	}
+	return message_returned->request_id;
 }
 
 /* Liberta a memória alocada por rtable_get_keys().

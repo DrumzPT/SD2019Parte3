@@ -24,7 +24,7 @@ void printError()
 {
 	printf("Comando errado! \n Comandos devem vir da seguinte forma: \n");
 	printf("put <key> <data> \n get <key> \n del <key> \n");
-	printf("size \n getkeys \n quit \n");
+	printf("size \n getkeys \n verify <op_n> \n quit \n ");
 }
 
 int main(int argc, char **argv)
@@ -147,6 +147,17 @@ int main(int argc, char **argv)
 		{
 			result = rtable_size(server);
 			printf("O tamanho da tabela é %d \n", result);
+		}
+		else if (strcmp(firstArg, "verify") == 0)
+		{
+			secondArg = strtok(NULL, "\0");
+			result = rtable_verify(server, atoi(secondArg));
+			if (result == 1)
+				printf("A operacao já foi realizada");
+			else if (result == 0)
+				printf("A operacao ainda nao foi realizada");
+			else
+				printf("Erro ao realizar a operacao");
 		}
 		else if (strcmp(firstArg, "getKeys") == 0)
 		{
