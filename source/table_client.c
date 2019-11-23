@@ -54,7 +54,9 @@ int main(int argc, char **argv)
 */
 	while (1)
 	{
-
+		secondArg = NULL;
+		thirdArg = NULL;
+		firstArg = NULL;
 		printf(">>");
 		fgets(cmd, 500, stdin);
 
@@ -90,8 +92,8 @@ int main(int argc, char **argv)
 				entry = entry_create(strdup(secondArg), data);
 				result = rtable_put(server, entry);
 
-				if (result == 0)
-					printf("PUT realizado com sucesso \n");
+				if (result != -1)
+					printf("ID do put é = %d\n", result);
 				else
 				{
 					printf("Erros ao realizar o PUT <%s> <%s> \n", secondArg, thirdArg);
@@ -132,8 +134,8 @@ int main(int argc, char **argv)
 			if (secondArg != NULL)
 			{
 				result = rtable_del(server, secondArg);
-				if (result == 0)
-					printf("Delete realizado com sucesso \n");
+				if (result != -1)
+					printf("Id da operacao: %d \n", result);
 				else
 					printf("Ocorreu um erro ao realizar o Delete \n");
 				//free(secondArg);

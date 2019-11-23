@@ -23,4 +23,8 @@ void table_skel_destroy();
 */
 int invoke(struct message_t *msg);
 
+/* Verifica se a operação identificada por op_n foi executada.
+*/
+int verify(int op_n);
+
 #endif

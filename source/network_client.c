@@ -9,6 +9,7 @@
 #include "message-private.h"
 #include "client_stub-private.h"
 #include "inet.h"
+#include <string.h>
 
 /* Esta função deve:
  * - Obter o endereço do servidor (struct sockaddr_in) a base da
@@ -82,10 +83,9 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 	case OP_DEL:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_DEL;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_KEY;
-		msgToSend.data_size = msg->datasize;
-		msgToSend.data = malloc(msg->datasize);
-		//msgToSend.data = strdup(msg->data)
-		memcpy(msgToSend.data, msg->data, msg->datasize);
+		msgToSend.key = strdup(msg->key);
+		//malloc(strlen(msg->key));
+		//memcpy(msgToSend.key, msg->key, strlen(msg->key));
 		break;
 	case OP_GET:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_GET;
@@ -198,6 +198,7 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 	case MESSAGE_T__OPCODE__OP_DEL_R:
 		msg_received_struct->opcode = OP_DEL + 1;
 		msg_received_struct->c_type = CT_NONE;
+		msg_received_struct->request_id = msg_received->request_id;
 		break;
 	case MESSAGE_T__OPCODE__OP_GET_R:
 		msg_received_struct->opcode = OP_GET + 1;
@@ -209,6 +210,7 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 	case MESSAGE_T__OPCODE__OP_PUT_R:
 		msg_received_struct->opcode = OP_PUT + 1;
 		msg_received_struct->c_type = CT_NONE;
+		msg_received_struct->request_id = msg_received->request_id;
 		break;
 	case MESSAGE_T__OPCODE__OP_GETKEYS_R:
 		msg_received_struct->opcode = OP_GETKEYS + 1;

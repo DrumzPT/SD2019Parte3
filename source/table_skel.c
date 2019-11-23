@@ -34,7 +34,8 @@ int table_skel_init(int n_lists)
 	if ((tabela = table_create(n_lists)) == NULL)
 		return -1;
 	pthread_mutex_init(&table_lock, NULL);
-	/* char *key = strdup("123abc");
+	/*
+	char *key = strdup("123abc");
 	char *key2 = strdup("teste");
 	char *key3 = strdup("outra");
 	char *key4 = strdup("lmnop");
@@ -43,7 +44,8 @@ int table_skel_init(int n_lists)
 	table_put(tabela, key, value);
 	table_put(tabela, key2, value);
 	table_put(tabela, key3, value2);
-	table_put(tabela, key4, value2); */
+	table_put(tabela, key4, value2);
+	*/
 	printf("\n ------------------- Table Size Apos init  %d\n", table_size(tabela));
 	queue_init();
 	if (pthread_create(&thread_id, NULL, &process_task, NULL) != 0)
@@ -96,6 +98,7 @@ struct task_t *queue_get_task()
 //exit = 1; // Pede a thread para terminar
 void *process_task(void *exit)
 {
+	int j;
 	// TYpe cast de void para o tipo de params
 	while (1 /*exit == 0*/)
 	{
@@ -104,18 +107,33 @@ void *process_task(void *exit)
 		{
 			struct data_t *dataToPut = data_create2(task->datasize, task->data);
 			pthread_mutex_lock(&table_lock);
-			table_put(tabela, task->key, dataToPut);
+			j = table_put(tabela, task->key, dataToPut);
 			op_count++;
 			pthread_mutex_unlock(&table_lock);
-			printf("put realizado com sucesso \n");
+			data_destroy(dataToPut);
+			if (j == 0)
+			{
+				printf("PUT realizado com sucesso  \n");
+				free(task->key);
+				free(task);
+			}
+			else
+				printf("Erro ao realizar PUT  \n");
 		}
 		else if (task->op == 0)
 		{
 			pthread_mutex_lock(&table_lock);
-			table_del(tabela, task->key);
+			j = table_del(tabela, task->key);
 			op_count++;
 			pthread_mutex_unlock(&table_lock);
-			printf("del realizado com sucesso \n");
+			if (j == 0)
+			{
+				printf("del realizado com sucesso  \n");
+				free(task->key);
+				free(task);
+			}
+			else
+				printf("Erro ao realizar del  \n");
 		}
 	}
 	return NULL;
@@ -149,6 +167,8 @@ int invoke(struct message_t *msg)
 	struct data_t *getData;
 	struct data_t *dataToPut;
 	struct entry_t *entryReceived;
+	struct task_t *task;
+
 	char *key;
 
 	char **keys;
@@ -156,12 +176,7 @@ int invoke(struct message_t *msg)
 	int i = 0;
 	int buffsize = 0;
 	int keysize;
-	//OPPUT e OPGet precisam de serialização / descerializacao
-	//Fazer enum de resposta
-	//Enviar toda a info necessária através do data com o serialization
-	//Neccesário descerializar a data
-	//Necessario msg init?, feito fora
-	// ou sdmessage__pack, feito fora
+
 	switch (msg->opcode)
 	{
 	case OP_ERROR:
@@ -177,24 +192,19 @@ int invoke(struct message_t *msg)
 		msg->datasize = size; //sera hton?
 		break;
 	case OP_DEL:
-		key = (char *)malloc(msg->datasize);
+		/* 		key = (char *)malloc(msg->datasize);
 		strcpy(key, msg->data);
 		if (key == NULL)
 		{
 			printf("Erro ao ler key do buffer\n");
-		}
-		if (table_del(tabela, key) == 0)
-		{
-			msg->opcode = OP_DEL + 1;
-			msg->c_type = CT_NONE;
-		}
-		else
-		{
-			msg->opcode = OP_ERROR;
-			msg->c_type = CT_NONE;
-			printf("Erro ao executar delete\n");
-			//return -1;
-		}
+		} */
+		task = create_task(msg);
+		// Add put request in the queue
+		msg->request_id = task->op_n;
+		queue_add_task(task);
+		/* if (table_del(tabela, key) == 0)*/
+		msg->opcode = OP_DEL + 1;
+		msg->c_type = CT_NONE;
 		break;
 	case OP_GET:
 		key = (char *)malloc(msg->datasize);
@@ -226,20 +236,15 @@ int invoke(struct message_t *msg)
 		break;
 	case OP_PUT:
 		printf("key é = %s \n", msg->key);
-		if ((dataToPut = data_create2(msg->datasize, msg->data)) == NULL)
-		{
-			printf("Erro ao criar data para inserir na tabela \n");
-			return -1;
-		}
 		// Create task from message
-		struct task_t *task = create_task(msg);
+		task = create_task(msg);
+		msg->request_id = task->op_n;
 		// Add put request in the queue
 		queue_add_task(task);
 		// Respond
 		//if (table_put(tabela, msg->key, dataToPut) == 0)
 		msg->opcode = OP_PUT + 1;
 		msg->c_type = CT_RESULT;
-		msg->request_id = task->op_n;
 		printf("Mensagem para o cliente preparada com sucesso \n");
 		break;
 		//falta o get keys, enviar todas as keys pela data, descontruir.las pelo \0
@@ -282,6 +287,13 @@ int invoke(struct message_t *msg)
 	}
 
 	return 0;
+}
+
+/* Verifica se a operação identificada por op_n foi executada.
+*/
+int verify(int op_n)
+{
+	//TODO
 }
 
 struct task_t *create_task(struct message_t *msg)

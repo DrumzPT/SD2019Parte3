@@ -96,6 +96,7 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry)
 	{
 		return -1;
 	}
+	int id;
 	struct message_t *message = (struct message_t *)malloc(sizeof(struct message_t));
 	if (message == NULL)
 	{
@@ -120,8 +121,9 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry)
 	if (message_returned->opcode == (OP_PUT + 1))
 	{
 		//entry_destroy(entry);
-		free(message_returned);
-		return 0;
+		id = message_returned->request_id;
+		//free(message_returned);
+		return id;
 	}
 	else
 	{
@@ -186,6 +188,7 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key)
  */
 int rtable_del(struct rtable_t *rtable, char *key)
 {
+	printf("key: %s\n", key);
 	if (rtable == NULL || key == NULL)
 		return -1;
 	struct message_t *message = (struct message_t *)malloc(sizeof(struct message_t));
@@ -194,11 +197,10 @@ int rtable_del(struct rtable_t *rtable, char *key)
 		printf("Erro ao gerar message_t\n");
 		return -1;
 	}
-
+	int id;
 	message->opcode = OP_DEL;
 	message->c_type = CT_KEY;
-	message->datasize = strlen(key);
-	message->data = key;
+	message->key = key;
 
 	struct message_t *message_returned;
 	if ((message_returned = network_send_receive(rtable, message)) == NULL)
@@ -208,15 +210,20 @@ int rtable_del(struct rtable_t *rtable, char *key)
 		return -1;
 	}
 
-	free(message);
+	//free(message);
+	/* printf("OPCode = %d", message_returned->opcode);
+	printf("(OP_DEL + 1) = %d", (OP_DEL + 1)); */
 	if (message_returned->opcode == (OP_DEL + 1))
 	{
+		id = message_returned->request_id;
 		free(message_returned);
-		return 0;
+		free(message);
+		return id;
 	}
 	else
 	{
 		free(message_returned);
+		free(message);
 		return -1;
 	}
 }
@@ -256,6 +263,13 @@ int rtable_size(struct rtable_t *rtable)
 char **rtable_get_keys(struct rtable_t *rtable)
 {
 	return NULL;
+}
+
+/* Verifica se a operação identificada por op_n foi executada.
+*/
+int rtable_verify(struct rtable_t *rtable, int op_n)
+{
+	//TODO
 }
 
 /* Liberta a memória alocada por rtable_get_keys().

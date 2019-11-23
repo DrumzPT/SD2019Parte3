@@ -55,14 +55,15 @@ Implement multiplexing with poll() (Server).
 Figure out how to launch several clients.
 Test server multiplexing with several sequencial requests from different clients.
 Adaptar o servidor para processar pedidos de escrita assincronamente e responder sincronamente com o identificador da operacao.
+	Erro do del, a key está a ser passada como "olaUUU", descobrir de onde vem o UUU.
 	Implementar fila FIFO que regista pedidos.
-		metodos
+		metodos.
 	Gerar thread process_task() que processa os pedidos na fila
-		Retirar pedido da fila
-		Executar pedido
-		Incrementar op_count
-		Sincronizar acesso atomico a variaveis partilhadas
-	Alterar invoke() do table_skel.c para inserir pedido de escrita na fila
-	Alterar invoke() do table_skel.c para responder com id do pedido last_assigned (para o cliente poder usar no verify())
+		Retirar pedido da fila.
+		Executar pedido.
+		Incrementar op_count.
+		Sincronizar acesso atomico a variaveis partilhadas.
+	Alterar invoke() do table_skel.c para inserir pedido de escrita na fila.
+	Alterar invoke() do table_skel.c para responder com id do pedido last_assigned (para o cliente poder usar no verify()).
 Implement verify() (Server)
 Implement rtable_verify() (Client)

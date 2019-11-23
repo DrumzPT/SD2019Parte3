@@ -197,9 +197,7 @@ struct message_t *network_receive(int client_socket)
 	case MESSAGE_T__OPCODE__OP_DEL:
 		msg->opcode = 20;
 		msg->c_type = 10;
-		msg->datasize = msg_received->data_size;
-		msg->data = malloc(msg->datasize);
-		memcpy(msg->data, msg_received->data, msg->datasize);
+		msg->key = strdup(msg_received->key);
 		break;
 	case MESSAGE_T__OPCODE__OP_GET:
 		msg->opcode = 30;
@@ -253,6 +251,7 @@ int network_send(int client_socket, struct message_t *msg)
 	case (OP_DEL + 1):
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_DEL_R;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
+		msgToSend.request_id = msg->request_id;
 		break;
 	case (OP_GET + 1):
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_GET_R;
@@ -301,6 +300,7 @@ int network_send(int client_socket, struct message_t *msg)
 		close(client_socket);
 		return -1;
 	}
+	free(buffer);
 	return 0;
 }
 
