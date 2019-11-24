@@ -1,14 +1,8 @@
 Não foram implementados com sucesso todos os comandos.
-O comando 'put' e o Comando 'getKeys' não estão funcionais
-Como tal para poder testar os outros comandos a tabela é inicializada coms os
-seguintes valores:
-  <key>   | <data>
-  123abc  | 1234567abc
-  teste   | 1234567abc
-  outra   | q1w23er45t
-  lmnop   | q1w23er45t
+o Comando 'getKeys' não está funcional
+O servidor está preparado para NFDESC-1  (neste caso 3 )clientes
+	se necessário mais mudar a variávlel NFDESC em network_server e recompilar
 
-O servidor dá segfault no caso de se tentar obter uma chave que não exista
 
 Phase2 Network.
 1. Implement coding/decoding. // protoc --c_out=. sdmessage.proto // Gera ficheiros .c e copiar .h para include

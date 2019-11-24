@@ -110,7 +110,7 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 	case OP_VERIFY:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_VERIFY;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_RESULT;
-		msgToSend.opcode = msg->request_id;
+		msgToSend.request_id = msg->request_id;
 		break;
 	default:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_ERROR;
@@ -202,7 +202,7 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 		break;
 	case MESSAGE_T__OPCODE__OP_DEL_R:
 		msg_received_struct->opcode = OP_DEL + 1;
-		msg_received_struct->c_type = CT_NONE;
+		msg_received_struct->c_type = CT_RESULT;
 		msg_received_struct->request_id = msg_received->request_id;
 		break;
 	case MESSAGE_T__OPCODE__OP_GET_R:
@@ -214,7 +214,7 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 		break;
 	case MESSAGE_T__OPCODE__OP_PUT_R:
 		msg_received_struct->opcode = OP_PUT + 1;
-		msg_received_struct->c_type = CT_NONE;
+		msg_received_struct->c_type = CT_RESULT;
 		msg_received_struct->request_id = msg_received->request_id;
 		break;
 	case MESSAGE_T__OPCODE__OP_GETKEYS_R:
@@ -223,6 +223,11 @@ struct message_t *network_send_receive(struct rtable_t *rtable, struct message_t
 		msg_received_struct->datasize = msg_received->data_size;
 		msg_received_struct->data = malloc(msg_received->data_size);
 		memcpy(msg_received_struct->data, msg_received->data, msg_received->data_size);
+		break;
+	case MESSAGE_T__OPCODE__OP_VERIFY_R:
+		msg_received_struct->opcode = OP_VERIFY + 1;
+		msg_received_struct->c_type = CT_RESULT;
+		msg_received_struct->request_id = msg_received->request_id;
 		break;
 	default:
 		printf("Erro ao traduzir msg do cliente\n");

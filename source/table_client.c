@@ -153,9 +153,11 @@ int main(int argc, char **argv)
 			secondArg = strtok(NULL, "\0");
 			result = rtable_verify(server, atoi(secondArg));
 			if (result == 1)
-				printf("A operacao já foi realizada");
+				printf("A operacao já foi realizada\n");
 			else if (result == 0)
-				printf("A operacao ainda nao foi realizada");
+				printf("A operacao ainda nao foi realizada\n");
+			else if (result == -1)
+				printf("Não existe operacao com id: %d \n", atoi(secondArg));
 			else
 				printf("Erro ao realizar a operacao");
 		}

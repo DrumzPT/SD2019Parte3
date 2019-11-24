@@ -21,7 +21,7 @@ pthread_mutex_t queue_lock;
 pthread_cond_t queue_not_empty;
 pthread_t thread_id;
 //id da ultima op -- count das op realizadas
-int last_assigned, op_count;
+int last_assigned = 0, op_count = 0;
 
 /* Inicia o skeleton da tabela.
  * O main() do servidor deve chamar esta função antes de poder usar a
@@ -34,18 +34,6 @@ int table_skel_init(int n_lists)
 	if ((tabela = table_create(n_lists)) == NULL)
 		return -1;
 	pthread_mutex_init(&table_lock, NULL);
-	/*
-	char *key = strdup("123abc");
-	char *key2 = strdup("teste");
-	char *key3 = strdup("outra");
-	char *key4 = strdup("lmnop");
-	struct data_t *value = data_create2(strlen("1234567abc") + 1, strdup("1234567abc"));
-	struct data_t *value2 = data_create2(strlen("q1w23er45t") + 1, strdup("q1w23er45t"));
-	table_put(tabela, key, value);
-	table_put(tabela, key2, value);
-	table_put(tabela, key3, value2);
-	table_put(tabela, key4, value2);
-	*/
 	printf("\n ------------------- Table Size Apos init  %d\n", table_size(tabela));
 	queue_init();
 	if (pthread_create(&thread_id, NULL, &process_task, NULL) != 0)
@@ -163,7 +151,7 @@ int invoke(struct message_t *msg)
 		printf("Tabela nao inicializada\n");
 		return -1;
 	}
-	int size;
+	int size, task_complete;
 	struct data_t *getData;
 	struct data_t *dataToPut;
 	struct entry_t *entryReceived;
@@ -192,17 +180,10 @@ int invoke(struct message_t *msg)
 		msg->datasize = size; //sera hton?
 		break;
 	case OP_DEL:
-		/* 		key = (char *)malloc(msg->datasize);
-		strcpy(key, msg->data);
-		if (key == NULL)
-		{
-			printf("Erro ao ler key do buffer\n");
-		} */
 		task = create_task(msg);
 		// Add put request in the queue
 		msg->request_id = task->op_n;
 		queue_add_task(task);
-		/* if (table_del(tabela, key) == 0)*/
 		msg->opcode = OP_DEL + 1;
 		msg->c_type = CT_NONE;
 		break;
@@ -281,6 +262,13 @@ int invoke(struct message_t *msg)
 		}
 
 		break;
+	case OP_VERIFY:
+		printf("ID to Search = %d \n", msg->request_id);
+		task_complete = verify(msg->request_id);
+		msg->opcode = OP_VERIFY + 1;
+		msg->c_type = CT_RESULT;
+		msg->request_id = task_complete;
+		break;
 	default:
 		printf("Nenhum tipo de mensagem detectado \n");
 		return -1;
@@ -290,10 +278,19 @@ int invoke(struct message_t *msg)
 }
 
 /* Verifica se a operação identificada por op_n foi executada.
+* retorna 1 se sim, 0 cc.
 */
 int verify(int op_n)
 {
-	//TODO
+
+	if (op_n > last_assigned)
+		return -1;
+	else if (op_n >= op_count)
+		return 0;
+	else
+	{
+		return 1;
+	}
 }
 
 struct task_t *create_task(struct message_t *msg)

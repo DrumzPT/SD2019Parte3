@@ -266,18 +266,18 @@ char **rtable_get_keys(struct rtable_t *rtable)
 }
 
 /* Verifica se a operação identificada por op_n foi executada.
-*	0 False, 1 True;
+*	0 False, 1 True, -1 op_n inexistente, -2 erro
 */
 int rtable_verify(struct rtable_t *rtable, int op_n)
 {
 	printf("OP nr: %d \n ", op_n);
 	if (rtable == NULL)
-		return -1;
+		return -2;
 	struct message_t *message = (struct message_t *)malloc(sizeof(struct message_t));
 	if (message == NULL)
 	{
 		printf("Erro ao gerar message_t\n");
-		return -1;
+		return -2;
 	}
 	message->opcode = OP_VERIFY;
 	message->c_type = CT_RESULT;
@@ -286,8 +286,9 @@ int rtable_verify(struct rtable_t *rtable, int op_n)
 	if ((message_returned = network_send_receive(rtable, message)) == NULL)
 	{
 		free(message);
-		return -1;
+		return -2;
 	}
+	free(message);
 	return message_returned->request_id;
 }
 

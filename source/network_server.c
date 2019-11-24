@@ -221,6 +221,11 @@ struct message_t *network_receive(int client_socket)
 		msg->data = malloc(msg->datasize);
 		memcpy(msg->data, msg_received->data, msg->datasize);
 		break;
+	case MESSAGE_T__OPCODE__OP_VERIFY:
+		msg->opcode = OP_VERIFY;
+		msg->c_type = CT_RESULT;
+		msg->request_id = msg_received->request_id;
+		break;
 	default:
 		msg->opcode = 99;
 		msg->c_type = 60;
@@ -250,7 +255,7 @@ int network_send(int client_socket, struct message_t *msg)
 		break;
 	case (OP_DEL + 1):
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_DEL_R;
-		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
+		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_RESULT;
 		msgToSend.request_id = msg->request_id;
 		break;
 	case (OP_GET + 1):
@@ -262,7 +267,7 @@ int network_send(int client_socket, struct message_t *msg)
 		break;
 	case (OP_PUT + 1):
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_PUT_R;
-		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
+		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_RESULT;
 		msgToSend.request_id = msg->request_id;
 		break;
 	case (OP_GETKEYS + 1):
@@ -270,6 +275,11 @@ int network_send(int client_socket, struct message_t *msg)
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_KEYS;
 		msgToSend.data_size = msg->datasize;
 		memcpy(msgToSend.data, msg->data, msg->datasize);
+		break;
+	case (OP_VERIFY + 1):
+		msgToSend.opcode = MESSAGE_T__OPCODE__OP_VERIFY_R;
+		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_RESULT;
+		msgToSend.request_id = msg->request_id;
 		break;
 	default:
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_ERROR;
