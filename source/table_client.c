@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 			else
 				printf("Erro ao realizar a operacao");
 		}
-		else if (strcmp(firstArg, "getKeys") == 0)
+		else if (strcmp(firstArg, "getkeys") == 0)
 		{
 			char **resultGK = rtable_get_keys(server);
 			if (resultGK == NULL)

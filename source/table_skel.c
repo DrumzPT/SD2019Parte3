@@ -239,6 +239,7 @@ int invoke(struct message_t *msg)
 			msg->opcode = OP_GETKEYS + 1;
 			msg->c_type = CT_KEYS;
 			//Concatenar as keys todas para uma string
+			strcat(keys[i], "-EOK-");
 			keysize = strlen(keys[i]);
 			buffsize += keysize;
 			keyBuff = (char *)malloc(keysize);
@@ -246,19 +247,19 @@ int invoke(struct message_t *msg)
 			i++;
 			while (keys[i] != NULL)
 			{
+				strcat(keys[i], "-EOK-");
 				keysize = strlen(keys[i]);
 				buffsize += keysize;
 				keyBuff = (char *)realloc(keyBuff, keysize);
 				strcat(keyBuff, keys[i]);
 				i++;
 			}
-			msg->datasize = buffsize;
-			msg->data = malloc(buffsize);
-			memcpy(msg->data, keyBuff, buffsize);
+			msg->datasize = i;
+			msg->data = keyBuff;
 			//strcpy(msg->data, keyBuff);
 			//msg->data = keyBuff; // ou memcpy?
-			table_free_keys(keys);
-			free(keyBuff); // se dermos free o msg->data fica a apontar para nada
+			//table_free_keys(keys);
+			//free(keyBuff); // se dermos free o msg->data fica a apontar para nada
 		}
 
 		break;

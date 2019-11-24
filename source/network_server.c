@@ -274,7 +274,7 @@ int network_send(int client_socket, struct message_t *msg)
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_GETKEYS_R;
 		msgToSend.c_type = MESSAGE_T__C_TYPE__CT_KEYS;
 		msgToSend.data_size = msg->datasize;
-		memcpy(msgToSend.data, msg->data, msg->datasize);
+		msgToSend.data = strdup(msg->data);
 		break;
 	case (OP_VERIFY + 1):
 		msgToSend.opcode = MESSAGE_T__OPCODE__OP_VERIFY_R;

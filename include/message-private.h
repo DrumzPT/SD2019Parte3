@@ -18,7 +18,9 @@
 #define CT_RESULT 50
 #define CT_NONE 60
 
-	struct message_t
+#define EOK "-EOK-"
+
+struct message_t
 {
 	short opcode; /* código da operação na mensagem */
 	short c_type; /* tipo do conteúdo da mensagem */

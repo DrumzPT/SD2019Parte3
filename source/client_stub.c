@@ -262,7 +262,56 @@ int rtable_size(struct rtable_t *rtable)
  */
 char **rtable_get_keys(struct rtable_t *rtable)
 {
-	return NULL;
+	if (rtable == NULL)
+		return -1;
+	struct message_t *message = (struct message_t *)malloc(sizeof(struct message_t));
+	if (message == NULL)
+	{
+		printf("Erro ao gerar message_t\n");
+		return -1;
+	}
+	char *keysConcat = NULL;
+	char **keyArray;
+	char *token;
+
+	message->opcode = OP_GETKEYS;
+	message->c_type = CT_NONE;
+
+	struct message_t *message_returned;
+	if ((message_returned = network_send_receive(rtable, message)) == NULL)
+	{
+		free(message_returned);
+		free(message);
+		return keysConcat;
+	}
+
+	//free(message);
+	/* printf("OPCode = %d", message_returned->opcode);
+	printf("(OP_DEL + 1) = %d", (OP_DEL + 1)); */
+	if (message_returned->opcode == (OP_GETKEYS + 1))
+	{
+		int i = 0;
+		keysConcat = message_returned->data;
+		keyArray = calloc(message_returned->datasize + 1, sizeof(char *));
+		token = strtok(keysConcat, EOK);
+		while (token != NULL)
+		{
+			keyArray[i] = strdup(token);
+			token = strtok(NULL, EOK);
+			i++;
+		}
+		keyArray[i] = NULL;
+		free(message_returned);
+		free(message);
+
+		return keyArray;
+	}
+	else
+	{
+		free(message_returned);
+		free(message);
+		return keysConcat;
+	}
 }
 
 /* Verifica se a operação identificada por op_n foi executada.

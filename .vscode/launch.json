@@ -10,7 +10,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/binary/table-server",
 			"args": [
-				"50004",
+				"50008",
 				"7"
 			],
 			"stopAtEntry": true,
@@ -32,7 +32,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/binary/table-client",
 			"args": [
-				"127.0.0.1:50004"
+				"127.0.0.1:50008"
 			],
 			"stopAtEntry": true,
 			"cwd": "${workspaceFolder}",
